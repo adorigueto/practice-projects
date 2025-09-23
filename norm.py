@@ -1,15 +1,23 @@
 import numpy as np
 
-def randomization(n):
+def norm(A, B):
     """
-    Arg:
-      n - an integer
-    Returns:
-      A - a randomly-generated nx1 Numpy array.
-    """
-    A = np.random.random([n,1])
-    return A
+    Takes two Numpy column arrays, A and B, and returns the L2 norm of their
+    sum.
 
-n = 2
-A = randomization(n)
-print(A)
+    Arg:
+      A - a Numpy array
+      B - a Numpy array
+    Returns:
+      s - the L2 norm of A+B.
+    """
+
+    s = np.linalg.norm(A+B)
+
+    return s
+
+
+A = np.array([3,2,2])
+B = np.array([1,-2,5])
+
+print(norm(A,B))
