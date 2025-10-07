@@ -17,7 +17,7 @@ def get_order(n_samples):
         return indices
 
 
-#%% PERCEPTRON FULL CYCLE FUNCTION
+#%% PERCEPTRON SINGLE STEP
 
 
 def perceptron_single_step_update(
@@ -64,7 +64,7 @@ current_theta_0 = 0.0806381974533076
 print(perceptron_single_step_update(feature_vector, label, current_theta, current_theta_0))
 
 
-#%% PERCEPTRON FULL CYCLE FUNCTION
+#%% PERCEPTRON
 
 
 def perceptron(feature_matrix, labels, T):
@@ -102,6 +102,75 @@ def perceptron(feature_matrix, labels, T):
             current_theta_0 = updated_theta_0
 
     return updated_theta, updated_theta_0
+
+
+# Test sample
+matrix_data = [[1, 1],
+               [1, 1],
+               [1, 1]]
+feature_matrix = np.array(matrix_data)
+
+labels = np.array([1,1,-1])
+
+T = 5
+
+# Result
+result = perceptron(feature_matrix, labels, T)
+print(result[0])
+
+
+#%% AVERAGE PERCEPTRON
+
+def average_perceptron(feature_matrix, labels, T):
+    """
+    Runs the average perceptron algorithm on a given dataset.  Runs `T`
+    iterations through the dataset (we do not stop early) and therefore
+    averages over `T` many parameter values.
+
+    NOTE: Please use the previously implemented functions when applicable.
+    Do not copy paste code from previous parts.
+
+    NOTE: It is more difficult to keep a running average than to sum and
+    divide.
+
+    Args:
+        `feature_matrix` -  A numpy matrix describing the given data. Each row
+            represents a single data point.
+        `labels` - A numpy array where the kth element of the array is the
+            correct classification of the kth row of the feature matrix.
+        `T` - An integer indicating how many times the perceptron algorithm
+            should iterate through the feature matrix.
+
+    Returns a tuple containing two values:
+        the average feature-coefficient parameter `theta` as a numpy array
+            (averaged over T iterations through the feature matrix)
+        the average offset parameter `theta_0` as a floating point number
+            (averaged also over T iterations through the feature matrix).
+    """
+    current_theta = np.zeros(feature_matrix.shape[1])
+    current_theta_0 = 0
+    nsamples, nfeatures = feature_matrix.shape
+    # Initialize sums to track cumulative values
+    theta_sum = np.zeros(feature_matrix.shape[1])
+    theta_0_sum = 0.0
+    # Count total number of updates (nT)
+    total_steps = nsamples * T
+
+    for t in range(T):
+        for i in get_order(nsamples):
+            updated_theta, updated_theta_0 = perceptron_single_step_update(feature_vector=feature_matrix[i], label=labels[i],
+                                          current_theta=current_theta, current_theta_0=current_theta_0)
+            current_theta = updated_theta
+            current_theta_0 = updated_theta_0
+            # Add updated values to the running sums
+            theta_sum += updated_theta
+            theta_0_sum += updated_theta_0
+    
+    # Calculate averages by dividing sums by total number of steps
+    avg_theta = theta_sum / total_steps
+    avg_theta_0 = theta_0_sum / total_steps
+
+    return avg_theta, avg_theta_0
 
 
 # Test sample
