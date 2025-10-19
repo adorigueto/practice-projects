@@ -124,3 +124,25 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
     return theta
 
 
+def update_y(train_y, test_y):
+    """
+    Changes the old digit labels for the training and test set for the new (mod 3)
+    labels.
+
+    Args:
+        train_y - (n, ) NumPy array containing the labels (a number between 0-9)
+                 for each datapoint in the training set
+        test_y - (n, ) NumPy array containing the labels (a number between 0-9)
+                for each datapoint in the test set
+
+    Returns:
+        train_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
+                     for each datapoint in the training set
+        test_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
+                    for each datapoint in the test set
+    """
+    train_y_mod3 = train_y % 3
+    test_y_mod3 = test_y % 3
+    
+    return train_y_mod3, test_y_mod3
+
