@@ -1,5 +1,37 @@
 import numpy as np
 
+
+def augment_feature_vector(X):
+    """
+    Adds the x[i][0] = 1 feature for each data point x[i].
+
+    Args:
+        X - a NumPy matrix of n data points, each with d - 1 features
+
+    Returns: X_augment, an (n, d) NumPy array with the added feature for each datapoint
+    """
+    column_of_ones = np.zeros([len(X), 1]) + 1
+    return np.hstack((column_of_ones, X))
+
+
+def get_classification(X, theta, temp_parameter):
+    """
+    Makes predictions by classifying a given dataset
+
+    Args:
+        X - (n, d - 1) NumPy array (n data points, each with d - 1 features)
+        theta - (k, d) NumPy array where row j represents the parameters of our model for
+                label j
+        temp_parameter - the temperature parameter of softmax function (scalar)
+
+    Returns:
+        Y - (n, ) NumPy array, containing the predicted label (a number between 0-9) for
+            each data point
+    """
+    X = augment_feature_vector(X)
+    probabilities = compute_probabilities(X, theta, temp_parameter)
+    return np.argmax(probabilities, axis = 0)
+
 def compute_probabilities(X, theta, temp_parameter):
     """
     Computes, for each datapoint X[i], the probability that X[i] is labeled as j
@@ -146,3 +178,30 @@ def update_y(train_y, test_y):
     
     return train_y_mod3, test_y_mod3
 
+
+def compute_test_error_mod3(X, Y, theta, temp_parameter):
+    """
+    Returns the error of these new labels when the classifier predicts the digit. (mod 3)
+
+    Args:
+        X - (n, d - 1) NumPy array (n datapoints each with d - 1 features)
+        Y - (n, ) NumPy array containing the labels (a number from 0-2) for each
+            data point
+        theta - (k, d) NumPy array, where row j represents the parameters of our
+                model for label j
+        temp_parameter - the temperature parameter of softmax function (scalar)
+
+    Returns:
+        test_error - the error rate of the classifier (scalar)
+    """
+    # Get classification predictions (digits 0-9)
+    predicted_digits = get_classification(X, theta, temp_parameter)
+    
+    # Convert predicted digits to mod 3 labels (0-2)
+    predicted_mod3 = predicted_digits % 3
+    
+    # Calculate error rate: proportion of incorrect predictions
+    incorrect_predictions = (predicted_mod3 != Y)
+    test_error = np.mean(incorrect_predictions)
+    
+    return test_error
